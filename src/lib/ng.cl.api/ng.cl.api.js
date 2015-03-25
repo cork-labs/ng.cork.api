@@ -23,6 +23,10 @@
         return value && isFunction(value.then);
     }
 
+    function isInjectable(value) {
+        return isArray(value) && isFunction(value[value.length - 1]);
+    }
+
     /**
      * makes sure baseUrl ends with a traling /
      * @param {string} url
@@ -600,13 +604,10 @@
                         throw new Error('Invalid middleware name.');
                     }
                     if (arguments.length > 1) {
-                        if (middleware[name]) {
-                            throw new Error('middleware "' + name + '" is already registered.');
+                        if (middlewares[name]) {
+                            throw new Error('Middleware "' + name + '" is already registered.');
                         }
-                        if (isFunction(middleware)) {
-                            middlewares[name] = middleware;
-                        }
-                        if (isFunction(middleware)) {
+                        if (isFunction(middleware) || isInjectable(middleware)) {
                             middlewares[name] = middleware;
                         } else {
                             throw new Error('Invalid middleware "' + name + '".');

@@ -18,36 +18,43 @@ describe('ng.cl.api', function () {
 
             describe('when two arguments are provided', function () {
 
-                // it('should throw an exception if second argument is neither Array or Function.', inject(function (ClApi)  {
+                it('should throw an exception if second argument is neither Array or Function.', inject(function (ClApi)  {
 
-                //     var api = new ClApi();
+                    var api = new ClApi();
 
-                //     expect(function () {
-                //         api.middleware('foo', false);
-                //     }).toThrow(new Error('Invalid middleware "foo".'));
-                // }));
+                    expect(function () {
+                        api.middleware('foo', false);
+                    }).toThrow(new Error('Invalid middleware "foo".'));
+                }));
 
-                // it('should throw an exception if middleware is already registered.', inject(function (ClApi)  {
+                it('should return the api instance.', inject(function (ClApi)  {
 
-                //     var api = new ClApi();
-                //     api.middleware('foo', function () {});
+                    var api = new ClApi();
 
-                //     expect(function () {
-                //         api.middleware('foo', function () {});
-                //     }).toThrow(new Error('Middleware "foo" is already registered.'));
-                // }));
+                    expect(api.middleware('foo', function () {})).toBe(api);
+                }));
 
-                // describe('and second argument is an array', function () {
+                it('should throw an exception if middleware is already registered.', inject(function (ClApi)  {
 
-                //     it('should throw an exception if last element of last element of the array is not a function.', inject(function (ClApi)  {
+                    var api = new ClApi();
+                    api.middleware('foo', function () {});
 
-                //         var api = new ClApi();
+                    expect(function () {
+                        api.middleware('foo', function () {});
+                    }).toThrow(new Error('Middleware "foo" is already registered.'));
+                }));
 
-                //         expect(function () {
-                //             api.middleware('foo', ['bar', 'baz']);
-                //         }).toThrow(new Error('Invalid injectable middleware "foo".'));
-                //     }));
-                // });
+                describe('and second argument is an array', function () {
+
+                    it('should throw an exception if last element of last element of the array is not a function.', inject(function (ClApi)  {
+
+                        var api = new ClApi();
+
+                        expect(function () {
+                            api.middleware('foo', ['bar', 'baz']);
+                        }).toThrow(new Error('Invalid middleware "foo".'));
+                    }));
+                });
             });
 
             describe('when one argument is provided', function () {
