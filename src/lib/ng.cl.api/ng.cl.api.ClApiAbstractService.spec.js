@@ -88,7 +88,7 @@ describe('ng.cl.api', function () {
                     }).toThrow(new Error('Invalid options for service method "foo".'));
                 }));
 
-                it('should throw an error if pattern is not provided.', inject(function (ClApiAbstractService) {
+                it('should throw an error if provided pattern is invalid.', inject(function (ClApiAbstractService) {
 
                     var argsSpy = jasmine.createSpy('fooArgs');
 
@@ -96,6 +96,7 @@ describe('ng.cl.api', function () {
                         execute: function execute() {},
                         methods: {
                             foo: {
+                                pattern: false,
                                 config: {
                                     params: {
                                         foo: 'bar'
@@ -110,7 +111,7 @@ describe('ng.cl.api', function () {
                     }).toThrow(new Error('Invalid pattern for service method "foo".'));
                 }));
 
-                it('should throw an error if pattern is invalid.', inject(function (ClApiAbstractService) {
+                it('should throw an error if provided url is invalid.', inject(function (ClApiAbstractService) {
 
                     var argsSpy = jasmine.createSpy('fooArgs');
 
@@ -118,8 +119,8 @@ describe('ng.cl.api', function () {
                         execute: function execute() {},
                         methods: {
                             foo: {
+                                url: false,
                                 config: {
-                                    pattern: false,
                                     params: {
                                         foo: 'bar'
                                     }
@@ -130,7 +131,7 @@ describe('ng.cl.api', function () {
 
                     expect(function () {
                         new ClApiAbstractService(config);
-                    }).toThrow(new Error('Invalid pattern for service method "foo".'));
+                    }).toThrow(new Error('Invalid url for service method "foo".'));
                 }));
 
                 it('should throw an error if verb is not provided.', inject(function (ClApiAbstractService) {
@@ -496,7 +497,7 @@ describe('ng.cl.api', function () {
                 }));
             });
 
-            describe('compileURL', function () {
+            describe('config.url', function () {
 
                 var executeSpy;
                 var config;
@@ -619,6 +620,48 @@ describe('ng.cl.api', function () {
                     var expectedConfig = {
                         method: config.methods.foo.verb,
                         url: '/foo/baz/qux'
+                    };
+
+                    var args = executeSpy.calls.argsFor(0);
+                    expect(args[0]).toEqual(expectedConfig);
+                }));
+
+                it('should NOT interpolate pattern if method has a url property.', inject(function (ClApiAbstractService, $rootScope) {
+
+                    config.methods.foo.pattern = '/foo/:bar';
+                    config.methods.foo.url = '/baz';
+
+                    var instance = new ClApiAbstractService(config);
+                    instance.foo();
+                    $rootScope.$apply();
+
+                    expect(executeSpy).toHaveBeenCalled();
+
+                    var expectedConfig = {
+                        method: config.methods.foo.verb,
+                        url: '/baz'
+                    };
+
+                    var args = executeSpy.calls.argsFor(0);
+                    expect(args[0]).toEqual(expectedConfig);
+                }));
+
+                it('should NOT interpolate pattern if config has a url property.', inject(function (ClApiAbstractService, $rootScope) {
+
+                    config.methods.foo.pattern = '/foo/:bar';
+                    config.methods.foo.args = function (req) {
+                        req.url = '/baz';
+                    };
+
+                    var instance = new ClApiAbstractService(config);
+                    instance.foo();
+                    $rootScope.$apply();
+
+                    expect(executeSpy).toHaveBeenCalled();
+
+                    var expectedConfig = {
+                        method: config.methods.foo.verb,
+                        url: '/baz'
                     };
 
                     var args = executeSpy.calls.argsFor(0);

@@ -182,7 +182,7 @@
 
     // service related
 
-    var configProperties = ['params', 'data', 'headers', 'xsrfHeaderName', 'xsrfCookieName', 'transformRequest', 'transformResponse', 'cache', 'timeout', 'withCredentials', 'responseType'];
+    var configProperties = ['url', 'params', 'data', 'headers', 'xsrfHeaderName', 'xsrfCookieName', 'transformRequest', 'transformResponse', 'cache', 'timeout', 'withCredentials', 'responseType'];
 
     var Request = function Request(config) {
         extend(this, config);
@@ -310,7 +310,10 @@
         if (!isObjectObject(method)) {
             throw new Error('Invalid options for service method "' + name + '".');
         }
-        if (!isString(method.pattern)) {
+        if (method.hasOwnProperty('url') && !isString(method.url) && !isFunction(method.url)) {
+            throw new Error('Invalid url for service method "' + name + '".');
+        }
+        if (method.hasOwnProperty('pattern') && !isString(method.pattern)) {
             throw new Error('Invalid pattern for service method "' + name + '".');
         }
         if (!isString(method.verb)) {
@@ -334,8 +337,9 @@
             // acquired by copy
             var config = req.config;
             config.method = method.verb;
-            // compile url if a pattern is provided as a string
-            if (isString(method.pattern)) {
+            // compile url from pattern if url not provided
+            config.url = config.url || method.url;
+            if (!config.url) {
                 config.url = compileURL(method.pattern, req.urlParams);
             }
 
