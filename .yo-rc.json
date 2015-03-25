@@ -1,0 +1,28 @@
+{
+  "generator-nglib": {
+    "project.name": "ng.cl.api",
+    "project.description": "AngularJS services and classes for building complex api/model layers.",
+    "bower.id": "ng.cl.api",
+    "npm.id": "ng.cl.api",
+    "angular.module": "ng.cl.api",
+    "has.tpl": false,
+    "has.css": false,
+    "has.less": false,
+    "has.sass": false,
+    "has.docs": true,
+    "use.git": true,
+    "github.username": "cork-labs",
+    "github.reponame": "ng.cl.api",
+    "homepage.url": "https://github.com/cork-labs/ng.cl.api",
+    "docs.url": "http://jarvis.cork-labs.org/ng.cl.api/current/docs",
+    "bugs.url": "https://github.com/cork-labs/ng.cl.api/issues",
+    "license.name": "MIT",
+    "license.url": "http://cork-labs.mit-license.org/2015",
+    "author.name": "Cork Labs",
+    "author.email": "contact@cork-labs.org",
+    "author.url": "http://cork-labs.org",
+    "use.travis": true,
+    "travis.id": "ng.cl.api",
+    "repo.url": "git@github.com:cork-labs/ng.cl.api.git"
+  }
+}

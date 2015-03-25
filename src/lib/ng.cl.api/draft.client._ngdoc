@@ -1,0 +1,437 @@
+var module = module('myApi')
+
+module.provider('myApi', [
+
+    function () {
+        'use strict';
+
+        var serviceConfig = {
+            baseUrl: '/api'
+        };
+
+        this.configure = function (config) {
+            extend(serviceConfig, config);
+        };
+
+        /**
+         * @ngdoc service
+         * @name myApi
+         * @module cxApi
+         *
+         * @description
+         * My Api abstraction service.
+         */
+        this.$get = [
+            'clApi',
+            function myApiFactory(clApi) {
+                var self = this;
+
+                var MyApi = function () {
+
+                    clApi.call(self, serviceConfig);
+                }
+
+                MyApi.prototype = Object.create(clApi.protoype);
+                MyApi.prototype.constructor = myApi;
+
+                return new MyApi();
+            }
+        ];
+    }
+]);
+
+module.factory('MyApiService', [
+    'ClApiAbstractService',
+    function MyApiServiceFactory(ClApiAbstractService) {
+
+        var MyApiService = function (service, options) {
+            var self = this;
+
+            service.all = {
+                pattern: ':path',
+                request: [function (req) {
+                    req.modelName = options.modelName;
+                }],
+                success: ['normalizeResponse'],
+                error: ['normalizeError'],
+                config: {
+                    urlParams: {
+                        path: options.path
+                    }
+                }
+            };
+
+            service.methods = service.methods || {};
+
+            service.methods.save = service.methods.save || {
+                verb: 'POST',
+                args: function (req, instance) {
+                    req.data = instance;
+                },
+                success: ['createInstance', 'updateCache']
+            };
+
+            service.methods.update = service.methods.update || {
+                verb: 'PUT',
+                pattern: :path/:id',
+                args: function (req, instance) {
+                    req.urlParams.id = instance.id
+                    req.data = instance;
+                },
+                success: ['createInstance', 'updateCache']
+            };
+
+            service.methods.load = service.methods.load || {
+                verb: 'GET',
+                pattern: ':path/:id',
+                request: [
+                    myApi.middleware('getCache'),
+                    function (req, instance) {
+                        req.urlParams.id = instance.id
+                    }
+                ],
+                success: ['normalizeResponse','createInstance','updateCache']
+            };
+
+            service.methods.delete = service.methods.delete || {
+                verb: 'DELETE',
+                pattern: ':path/:id',
+                args: function (req, instance) {
+                    req.urlParams.id = instance.id
+                },
+                success: ['createInstance', 'purgeCache']
+            };
+
+            service.methods.list = service.methods.list || {
+                verb: 'GET',
+                args: function (req, filter, page, limit) {
+                    req.params = angular.copy(filter);
+                    req.params.page = page;
+                    req.params.limit = limit;
+                },
+                success: ['createPagedCollection', 'updateCache']
+            };
+
+            ClApiAbstractService.call(self, service);
+        };
+
+        return MyApiService;
+    }
+
+]);
+
+module.factory('UserService', [
+    'ClApiAbstractService',
+    'myApi',
+    'User',
+    function UserServiceFactory(ClApiAbstractService, myApi, User) {
+
+        var UserService = function (config) {
+            var self = this;
+
+            var service = {};
+
+            service.all = {
+                request: [
+                    function (req) {
+                        req.modelName = 'user';
+                    }
+                ],
+                success: ['normalizeResponse'],
+                success: ['normalizeError']
+            };
+
+            service.methods = {
+
+                create: {
+                    verb: 'POST',
+                    pattern: '/user',
+                    args: function (req, instance) {
+                        req.data = instance;
+                    }
+                },
+
+                update: {
+                    verb: 'PUT',
+                    pattern: /user/:id',
+                    args: function (req, instance) {
+                        req.urlParams.id = instance.id;
+                        req.data = instance;
+                    }
+                },
+
+                load: {
+                    verb: 'GET',
+                    pattern: '/user/:id',
+                    args: function (req, instance) {
+                        req.urlParams.id = instance.id;
+                    },
+                    success: ['createInstance']
+                },
+
+                delete: {
+                    verb: 'DELETE',
+                    pattern: '/user/:id'
+                },
+
+                getWorkspaces: {
+                    verb: 'GET',
+                    pattern: '/user/:id/workspaces',
+                    args: function (req, instance) {
+                        req.urlParams.id = instance.id;
+                    },
+                    success: [
+                        function (req, res) {
+                            myApi.createCollection(User, res.meta.pagination),
+                        }
+                    ]
+                },
+
+                search: {
+                    verb: 'POST',
+                    pattern: '/user',
+                    args: function (req, filter, page, limit) {
+                        req.data = filter.getParams();
+                    },
+                    success: [
+                        function (req, res) {
+                            res = self.newCollection(res.data);
+                            myApi.convertPagination(res)
+                            return res;
+                        }
+                    ]
+                })
+            };
+
+            ClApiAbstractService.apply(self, service);
+        };
+
+        return UserService;
+    }
+]);
+
+module.config([
+    'myApiProvider',
+    function (myApiProvider) {
+
+        myApiProvider.configure({
+            baseUrl: '/mock-api'
+        });
+    }
+]);
+
+module.run([
+    '$injector',
+    'ClApi',
+    'myApi',
+    'MyApiService',
+    function ($injector, ClApi, myApi, MyApiService) {
+
+        // -- middlewares
+
+        myApi.middleware('getCache', function (req) {
+            var instance;
+            if (instance = cache.get(req.urlParams.id)) {
+                return instance;
+            }
+        });
+
+        myApi.middleware('normalizeResponse', function (req, res) {
+
+        });
+
+
+        myApi.middleware('createInstance', function (req, res) {
+            return myApi.model(req.modelName).$new(res.data);
+        });
+
+        myApi.middleware('createPagedCollection', function (req, res) {
+            var collection = new clPagedCollection(res.data, api.model(modelName).$new, res.meta.pagination);
+            collection.onNext(function () {
+                req.params.page = collection.page + 1;
+                return req.replay();
+            });
+            collection.onPrevious(function () {
+                req.params.page = collection.page - 1;
+                return req.replay();
+            });
+            return collection;
+        });
+
+        myApi.middleware('createContinuousCollection', function (req, res) {
+            var collection = new clContinuousCollection(res.data, api.model(modelName).$new, res.meta.pagination);
+            collection.onMore(function () {
+                req.params.offset = collection.offset;
+                return req.replay();
+            });
+            return collection;
+        });
+
+        myApi.middleware('updateCache', function (req, res) {
+            if (res.data instanceof clCollection) {
+                for () {
+
+                }
+            }
+            else {
+                cache.set(res.data.id, res.data);
+            }
+        });
+
+        var myApi.middleware('purgeCache', function (req, res) {
+            return res;
+        });
+
+        var myApi.middleware('normalizeError', function (req, res) {
+            // something, something to res
+            return $q.reject(res);
+        });
+
+
+        // -- services
+
+        myApi.service('auth', 'AuthService');
+
+        myApi.service('users', function () {
+            return new UserService({path: '/post'});
+        });
+
+        myApi.service('accounts', function () {
+            var AccountsService = $injector.get('AccountsService');
+            return new AccountsService(config.get('api.myApi.resource.accounts'));
+        });
+
+        myApi.service('tags', function () {
+            return new MyApiService({}, {path: '/tag'});
+        });
+
+        myApi.service('posts', function () {
+
+            var config = {
+                methods: {
+                    search: {
+                        verb: 'POST',
+                        args: function (req, filter, page, limit) {
+                            req.data = filter.getData();
+                            req.params.page = page || 1;
+                            req.params.limit = limit || 50;
+                        },
+                        success: ['createPagedCollection', 'updateCache']
+                    }
+                }
+            }
+
+            return new MyApiService(config, {path: '/post'});
+        });
+
+
+        myApi.service('foos', function () {
+
+            var config = {
+                execute: function (config) {
+                    return $http(config);
+                },
+                methods: {
+                    bar: {
+                        verb: 'POST',
+                        url: function (req) {
+                            return req.params.id < 3 ? 'http://example.com/' : '/baz/' + req.params.id;
+                        }
+                    }
+                }
+            }
+
+            return new MyApiService(config, {path: '/post'});
+        });
+
+        // -- models
+
+        myApi.model('user', 'User');
+
+        myApi.model('post', function (data) {
+            return new Post(data);
+        });
+
+        myApi.model('user', {
+            constructor: 'MyApiModel',
+            service: 'users',
+            then: null,
+            methods: [{
+                name: 'save',
+                method: function () {
+                    var method = this.$isNew ? 'create' : 'update';
+                    return myApi.service('users')[method](this).then(function (res) {
+                        this.$replace(res);
+                    });
+                }
+            }, {
+                name: 'load',
+                then: '$replace'
+            },
+            'delete',
+            {
+                name; 'settings',
+                service: 'settings',
+                method: 'get'
+            }
+        });
+    }
+]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function updatePage = function (collection) {
+    $scope.pages[collection.page] = collection;
+    $scope.currentPage = collection.page;
+}
+
+
+service.list(filters).then(updatePage)
+
+$scope.next = function () {
+    $scope.list.next().then(updatPage)
+}
+
+$scope.previous = function () {
+    $scope.list.previous().then(updatePage);
+}

@@ -1,0 +1,15 @@
+@ngdoc overview
+@name API Reference
+@description
+
+# ng.cl.api API Reference
+
+> Welcome to the **ng.cl.api** API reference.
+
+If you want to know how **ng.cl.api** works, checkout the {@link guide/ guide} and the {@link demos/ demos}.
+
+
+## Modules
+
+- **[ng.cl.api](#/api/ng.cl.api)** - Provides a configurable service that divides numbers by X, as well as a directive and a filter.
+

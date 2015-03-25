@@ -1,0 +1,37 @@
+{
+  "name": "ng.cl.api",
+  "version": "0.0.1",
+  "description": "AngularJS services and classes for building complex api/model layers.",
+  "authors": [
+    "Cork Labs <contact@cork-labs.org> (http://cork-labs.org)"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/cork-labs/ng.cl.api",
+  "ignore": [
+    "bin",
+    "docs",
+    "grunt",
+    ".bowerrc",
+    ".editorconfig",
+    ".gitignore",
+    ".jsbeautifyrc",
+    ".jshintrc",
+    ".travis.yml",
+    ".yo-rc.json",
+    "Gruntfile.js",
+    "TODO.md",
+    "bootstrap.sh",
+    "package.json",
+    "travis.sh"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:cork-labs/ng.cl.api.git"
+  },
+  "dependencies": {
+    "angular": "~1.3.8"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.3.8"
+  }
+}

@@ -1,0 +1,110 @@
+
+
+// -- util functions
+
+
+
+
+function Request(method) {
+    var self = this;
+
+    var config = {};
+
+    // {Object.<string|Object>} – Map of strings or objects which will be turned to ?key1=value1&key2=value2 after the url. If the value is not a string, it will be JSONified.
+    config.params = null;
+
+    // {string|Object} – Data to be sent as the request message data.
+    config.data = null;
+
+    // {Object} – Map of strings or functions which return strings representing HTTP headers to send to the server. If the return value of a function is null, the header will not be sent. Functions accept a config object as an argument.
+    config.headers = null;
+
+    // {string} – Name of HTTP header to populate with the XSRF token.
+    config.xsrfHeaderName = null;
+
+    // {string} – Name of cookie containing the XSRF token.
+    config.xsrfCookieName = null;
+
+    // {function(data, headersGetter)|Array.<function(data, headersGetter)>} – transform function or an array of such functions. The transform function takes the http request body and headers and returns its transformed (typically serialized) version. See Overriding the Default Transformations
+    config.transformRequest = null;
+
+    // {function(data, headersGetter, status)|Array.<function(data, headersGetter, status)>} – transform function or an array of such functions. The transform function takes the http response body, headers and status and returns its transformed (typically deserialized) version. See Overriding the Default Transformations
+    config.transformResponse = null;
+
+    // {boolean|Cache} – If true, a default $http cache will be used to cache the GET request, otherwise if a cache instance built with $cacheFactory, this cache will be used for caching.
+    config.cache = null;
+
+    // {number|Promise} – timeout in milliseconds, or promise that should abort the request when resolved.
+    config.timeout = null;
+
+    // {boolean} - whether to set the withCredentials flag on the XHR object. See requests with credentials for more information.
+    config.withCredentials = null;
+
+    // {string} - see requestType.
+    config.responseType = null;
+
+    self.config = config;
+}
+
+module.factory('clApi', [
+    '$http',
+    function clApiFactory ($http) {
+
+
+        /**
+         * @param  {string} url As provided to method.
+         * @returns {string}     Prefixed url.
+         */
+        function prefixWithBaseUrl(serviceConfig, url) {
+            if (serviceConfig.baseUrl) {
+                // remove "/" from start of url
+                // since we already ensured at config time that baseUrl has a trailing "/"
+                if (/^\//.test(url)) {
+                    url = url.substring(1);
+                }
+                if (!(/^(http[s]?:)?\/\//.test(url))) {
+                    url = serviceConfig.baseUrl + url;
+                }
+            }
+            return url;
+        }
+
+        var clApi = function (serviceConfig) {
+            var self = this;
+
+            // -- execute
+
+            self.execute = function (config) {
+
+                // resolves url in case it is a function
+                if (angular.isFunction(config.url)) {
+                    config.url = url();
+                }
+                // and prefix with url if not absolute
+                config.url = prefixWithBaseUrl(serviceConfig.baseUrl, config.url);
+
+                // normalise response object
+                return $http(config);
+            };
+        }
+
+
+        return new clApi();
+    }
+]);
+
+
+
+
+
+
+
+
+
+
+
+clCollection
+
+clPagedCollection
+
+clContinuousCollection
