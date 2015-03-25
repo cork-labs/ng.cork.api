@@ -133,7 +133,7 @@ describe('ng.cl.api', function () {
                     }));
                 });
 
-                describe('and the service known', function () {
+                describe('and the service is known', function () {
 
                     it('should throw invoke the factory only once.', inject(function (ClApi)  {
 

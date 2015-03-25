@@ -229,7 +229,7 @@ describe('ng.cl.api', function () {
 
                         describe('and "methods" contains an object element', function () {
 
-                            it('should throw an error if method does not contain a "name"" property.', inject(function (ClApi)  {
+                            it('should throw an error if method does not contain a "name" property.', inject(function (ClApi)  {
 
                                 var options = {
                                     $constructor: 'Foo',
@@ -293,6 +293,24 @@ describe('ng.cl.api', function () {
                                 expect(function () {
                                     api.model('foo', options);
                                 }).toThrow(new Error('Invalid "name" in options for method "undefined" of model "foo".'));
+                            }));
+
+                            it('should throw an error if method contains a "method" property that is neither a string or a function.', inject(function (ClApi)  {
+
+                                var options = {
+                                    $constructor: 'Foo',
+                                    methods: [{
+                                        name: 'bar',
+                                        method: false
+                                    }],
+                                    service: 'baz'
+                                };
+
+                                var api = new ClApi();
+
+                                expect(function () {
+                                    api.model('foo', options);
+                                }).toThrow(new Error('Invalid "method" in options for method "bar" of model "foo".'));
                             }));
 
                             it('should throw an error if both the method and the model do not contain a "service" property.', inject(function (ClApi)  {
