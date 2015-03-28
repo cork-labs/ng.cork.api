@@ -689,9 +689,11 @@
                  * @description
                  * Registers a service factory or retrieves a service instance.
                  *
-                 * If no factory or configuration is provided it will retrieve the service instance or throw an error
-                 * if the service is unkonwn. If a factory or configuration is provided it will store it or throw an
-                 * error if a service with this name was registered before.
+                 * If no factory function or service name is provided as the second argument, it will retrieve the
+                 * service instance or throw an error if the service is unkonwn.
+
+                 * If a factory function or service name is provided as the second argument, it will store a the service
+                 * factory or throw an error if a service with this name was registered before.
                  *
                  * @param {string} name The service name.
                  * @param {function=} factory A function that returns ths service instance or an object configuration for ClApiAbstractService.
@@ -704,11 +706,6 @@
                     if (arguments.length > 1) {
                         if (factories[name]) {
                             throw new Error('Service "' + name + '" is already registered.');
-                        }
-                        if (isObjectObject(factory)) {
-                            factories[name] = function () {
-                                return new ClApiAbstractService(factory);
-                            };
                         } else if (isString(factory)) {
                             factories[name] = function () {
                                 return $injector.get(name);
