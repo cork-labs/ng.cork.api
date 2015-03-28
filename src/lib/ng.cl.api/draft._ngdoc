@@ -46,54 +46,6 @@ function Request(method) {
     self.config = config;
 }
 
-module.factory('clApi', [
-    '$http',
-    function clApiFactory ($http) {
-
-
-        /**
-         * @param  {string} url As provided to method.
-         * @returns {string}     Prefixed url.
-         */
-        function prefixWithBaseUrl(serviceConfig, url) {
-            if (serviceConfig.baseUrl) {
-                // remove "/" from start of url
-                // since we already ensured at config time that baseUrl has a trailing "/"
-                if (/^\//.test(url)) {
-                    url = url.substring(1);
-                }
-                if (!(/^(http[s]?:)?\/\//.test(url))) {
-                    url = serviceConfig.baseUrl + url;
-                }
-            }
-            return url;
-        }
-
-        var clApi = function (serviceConfig) {
-            var self = this;
-
-            // -- execute
-
-            self.execute = function (config) {
-
-                // resolves url in case it is a function
-                if (angular.isFunction(config.url)) {
-                    config.url = url();
-                }
-                // and prefix with url if not absolute
-                config.url = prefixWithBaseUrl(serviceConfig.baseUrl, config.url);
-
-                // normalise response object
-                return $http(config);
-            };
-        }
-
-
-        return new clApi();
-    }
-]);
-
-
 
 
 

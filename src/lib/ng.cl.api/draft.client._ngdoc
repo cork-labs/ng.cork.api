@@ -63,43 +63,58 @@ module.factory('MyApiService', [
 
             service.methods = service.methods || {};
 
-            service.methods.save = service.methods.save || {
+            service.methods.create = service.methods.create || {
                 verb: 'POST',
                 args: function (req, instance) {
+                    req.instance = instance;
                     req.data = instance;
                 },
-                success: ['createInstance', 'updateCache']
+                success: ['createOrUpdateInstance', 'updateModelCache']
             };
 
             service.methods.update = service.methods.update || {
                 verb: 'PUT',
                 pattern: :path/:id',
                 args: function (req, instance) {
+                    req.instance = instance;
                     req.urlParams.id = instance.id
                     req.data = instance;
                 },
-                success: ['createInstance', 'updateCache']
+                success: ['createOrUpdateInstance', 'updateModelCache']
             };
 
             service.methods.load = service.methods.load || {
                 verb: 'GET',
                 pattern: ':path/:id',
+                args: function (req, instance) {
+                    req.instance = instance;
+                    req.urlParams.id = instance.id
+                },
                 request: [
-                    myApi.middleware('getCache'),
-                    function (req, instance) {
-                        req.urlParams.id = instance.id
-                    }
+                    myApi.middleware('getModelCache'),
                 ],
-                success: ['normalizeResponse','createInstance','updateCache']
+                success: ['createOrUpdateInstance','updateModelCache']
+            };
+
+            service.methods.get = service.methods.get || {
+                verb: 'GET',
+                pattern: ':path/:id',
+                args: function (req, id) {
+                    req.urlParams.id = id;
+                },
+                request: [
+                    myApi.middleware('getModelCache'),
+                ],
+                success: ['createOrUpdateInstance','updateModelCache']
             };
 
             service.methods.delete = service.methods.delete || {
                 verb: 'DELETE',
                 pattern: ':path/:id',
-                args: function (req, instance) {
-                    req.urlParams.id = instance.id
+                args: function (req, instanceOrId) {
+                    req.urlParams.id = isString(instanceOrId) ? instanceOrId : instanceOrId.id;
                 },
-                success: ['createInstance', 'purgeCache']
+                success: ['purgeCache']
             };
 
             service.methods.list = service.methods.list || {
@@ -109,7 +124,7 @@ module.factory('MyApiService', [
                     req.params.page = page;
                     req.params.limit = limit;
                 },
-                success: ['createPagedCollection', 'updateCache']
+                success: ['createPagedCollection', 'updateModelCache']
             };
 
             ClApiAbstractService.call(self, service);
@@ -148,8 +163,9 @@ module.factory('UserService', [
                     pattern: '/user',
                     args: function (req, instance) {
                         req.data = instance;
-                    }
-                },
+                    },
+                    success: ['createOrUpdateInstance','updateModelCache']
+                }
 
                 update: {
                     verb: 'PUT',
@@ -157,7 +173,17 @@ module.factory('UserService', [
                     args: function (req, instance) {
                         req.urlParams.id = instance.id;
                         req.data = instance;
-                    }
+                    },
+                    success: ['createOrUpdateInstance','updateModelCache']
+                },
+
+                get: {
+                    verb: 'GET',
+                    pattern: '/user/:id',
+                    args: function (req, id) {
+                        req.urlParams.id = id;
+                    },
+                    success: ['createOrUpdateInstance','updateModelCache']
                 },
 
                 load: {
@@ -166,12 +192,16 @@ module.factory('UserService', [
                     args: function (req, instance) {
                         req.urlParams.id = instance.id;
                     },
-                    success: ['createInstance']
+                    success: ['createOrUpdateInstance','updateModelCache']
                 },
 
                 delete: {
                     verb: 'DELETE',
-                    pattern: '/user/:id'
+                    pattern: '/user/:id',
+                    args: function (req, instanceOrId) {
+                        req.urlParams.id = isString(instanceOrId) ? instanceOrId : instanceOrId.id;
+                    },
+                    success: ['purgeCache']
                 },
 
                 getWorkspaces: {
@@ -182,7 +212,7 @@ module.factory('UserService', [
                     },
                     success: [
                         function (req, res) {
-                            myApi.createCollection(User, res.meta.pagination),
+                            return myApi.createCollection(User, res.meta.pagination),
                         }
                     ]
                 },
@@ -195,9 +225,16 @@ module.factory('UserService', [
                     },
                     success: [
                         function (req, res) {
-                            res = self.newCollection(res.data);
-                            myApi.convertPagination(res)
-                            return res;
+                            var collection = new ClPagedCollection(res.data, api.model(req.modelName).$new, res.meta.pagination);
+                            collection.onNext(function () {
+                                req.data.page = collection.page + 1;
+                                return req.replay();
+                            });
+                            collection.onPrevious(function () {
+                                req.data.page = collection.page - 1;
+                                return req.replay();
+                            });
+                            return collection;
                         }
                     ]
                 })
@@ -223,30 +260,38 @@ module.config([
 module.run([
     '$injector',
     'ClApi',
+    'CorkCache',
+    'myModel',
     'myApi',
     'MyApiService',
-    function ($injector, ClApi, myApi, MyApiService) {
+    function ($injector, ClApi, CorkCache, myModel, myApi, MyApiService) {
+
+        // -- caches
+
+        var modelCache = new CorkCache('my-model');
+        var cache
 
         // -- middlewares
 
-        myApi.middleware('getCache', function (req) {
-            var instance;
-            if (instance = cache.get(req.urlParams.id)) {
-                return instance;
-            }
-        });
-
         myApi.middleware('normalizeResponse', function (req, res) {
-
+            res.data
+            res.meta
+            res.error
         });
 
 
-        myApi.middleware('createInstance', function (req, res) {
-            return myApi.model(req.modelName).$new(res.data);
+        myApi.middleware('createOrUpdateInstance', function (req, res) {
+            if (req.instance) {
+                req.instance.$replace(res.data);
+            }
+            else {
+                req.instance = myModel.model(req.modelName).$new(res.data);
+            }
+            return req.instance;
         });
 
         myApi.middleware('createPagedCollection', function (req, res) {
-            var collection = new clPagedCollection(res.data, api.model(modelName).$new, res.meta.pagination);
+            var collection = new ClPagedCollection(res.data, api.model(modelName).$new, res.meta.pagination);
             collection.onNext(function () {
                 req.params.page = collection.page + 1;
                 return req.replay();
@@ -259,7 +304,7 @@ module.run([
         });
 
         myApi.middleware('createContinuousCollection', function (req, res) {
-            var collection = new clContinuousCollection(res.data, api.model(modelName).$new, res.meta.pagination);
+            var collection = new ClContinuousCollection(res.data, api.model(modelName).$new, res.meta.pagination);
             collection.onMore(function () {
                 req.params.offset = collection.offset;
                 return req.replay();
@@ -267,18 +312,26 @@ module.run([
             return collection;
         });
 
-        myApi.middleware('updateCache', function (req, res) {
-            if (res.data instanceof clCollection) {
-                for () {
+        myApi.middleware('getModelCache', function (req) {
+            var instance;
+            if (instance = modelCache.get([req.modelName, req.urlParams.id])) {
+                return instance;
+            }
+        });
 
+        myApi.middleware('updateModelCache', function (req, res) {
+            if (res instanceof clCollection) {
+                for (var ix = 0; ix < res.length; ix++) {
+                    modelCache.set([req.modelName, res[ix].id], res[ix]);
                 }
             }
             else {
-                cache.set(res.data.id, res.data);
+                modelCache.set([req.modelName, res.id], res);
             }
         });
 
         var myApi.middleware('purgeCache', function (req, res) {
+            modelCache.delete([res.modelName, req.urlParams.id]);
             return res;
         });
 
@@ -316,7 +369,7 @@ module.run([
                             req.params.page = page || 1;
                             req.params.limit = limit || 50;
                         },
-                        success: ['createPagedCollection', 'updateCache']
+                        success: ['createPagedCollection', 'updateModelCache']
                     }
                 }
             }
@@ -360,9 +413,7 @@ module.run([
                 name: 'save',
                 method: function () {
                     var method = this.$isNew ? 'create' : 'update';
-                    return myApi.service('users')[method](this).then(function (res) {
-                        this.$replace(res);
-                    });
+                    return myApi.service('users')[method](this);
                 }
             }, {
                 name: 'load',
