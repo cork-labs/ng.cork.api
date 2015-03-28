@@ -86,7 +86,7 @@ describe('ng.cl.api', function () {
 
             describe('inherited constructor', function () {
 
-                it('should re-initialize existing non-object properties of the instance if overriding those with Object values.', inject(function (ClModel) {
+                it('should extend/override the instance data with provided data.', inject(function (ClModel) {
 
                     var data = {
                         id: 42,
@@ -107,73 +107,6 @@ describe('ng.cl.api', function () {
                     expect(angular.isObject(instance.foo)).toBeTruthy();
                     expect(angular.isArray(instance.foo)).toBeFalsy();
                     expect(instance.foo.bar).toBe('baz');
-                }));
-
-                it('should re-initialize existing non-object properties of the instance if overriding those with Array values.', inject(function (ClModel) {
-
-                    var data = {
-                        id: 42,
-                        foo: [
-                            'bar'
-                        ]
-                    };
-
-                    var SubClass = function (data) {
-                        this.foo = '';
-                        ClModel.call(this, data);
-                    };
-                    SubClass.prototype = Object.create(ClModel.prototype);
-
-                    var instance = new SubClass(data);
-
-                    expect(instance.id).toBe(42);
-                    expect(angular.isArray(instance.foo)).toBeTruthy();
-                    expect(instance.foo).toEqual(['bar']);
-                }));
-
-                it('should re-initialize existing Array properties of the instance if overriding then with Object values.', inject(function (ClModel) {
-
-                    var data = {
-                        id: 42,
-                        foo: {
-                            bar: 'baz'
-                        }
-                    };
-
-                    var SubClass = function (data) {
-                        this.foo = [];
-                        ClModel.call(this, data);
-                    };
-                    SubClass.prototype = Object.create(ClModel.prototype);
-
-                    var instance = new SubClass(data);
-
-                    expect(instance.id).toBe(42);
-                    expect(angular.isObject(instance.foo)).toBeTruthy();
-                    expect(angular.isArray(instance.foo)).toBeFalsy();
-                    expect(instance.foo.bar).toBe('baz');
-                }));
-
-                it('should re-initialize existing Object properties of the instance if overriding then with Array values.', inject(function (ClModel) {
-
-                    var data = {
-                        id: 42,
-                        foo: [
-                            'bar'
-                        ]
-                    };
-
-                    var SubClass = function (data) {
-                        this.foo = {};
-                        ClModel.call(this, data);
-                    };
-                    SubClass.prototype = Object.create(ClModel.prototype);
-
-                    var instance = new SubClass(data);
-
-                    expect(instance.id).toBe(42);
-                    expect(angular.isArray(instance.foo)).toBeTruthy();
-                    expect(instance.foo).toEqual(['bar']);
                 }));
             });
         });

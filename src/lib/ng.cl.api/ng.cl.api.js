@@ -38,11 +38,14 @@
     }
 
     /**
-     *
+     * @param {object} destination
+     * @param {object} source
+     * @return {object}
      */
     function extend(destination, source) {
+        // bailout
         if (destination !== source) {
-            //
+            // handles dates and regexps
             if (isDate(source)) {
                 destination = new Date(source.getTime());
             } else if (isRegExp(source)) {
@@ -406,7 +409,8 @@
                 var self = this;
 
                 // extends model with with  initialization data
-                // and triggers the `$decorate()` method. Override in subclasses to act on populated data.
+                // and triggers the `$decorate()` method.
+                // Override in subclasses to act on populated data.
                 if (data) {
                     self.$merge(data);
                 }
@@ -476,7 +480,7 @@
              * Invoked on initialization, and when {@link ng.cl.api.ClModel#$merge $merge()} or
              * {@link ng.cl.api.ClModel#replace replace()} are invoked.
              * Override this method in subclasses to act on populated data, for instance, replacing POJO with instances
-             * of the appropriate class.
+             * of the appropriate classes.
              */
             Object.defineProperty(ClModel.prototype, '$decorate', {
                 configurable: true,
@@ -759,6 +763,23 @@
                     }
                 });
             };
+
+            // -- static util
+
+            /**
+             * @ngdoc function
+             * @name extend
+             * @methodOf ng.cl.api.ClApi
+             *
+             * @description
+             * Static deep merge utility function.
+             *
+             * @param {*} destination The object to extend. If a scalar value is provided and `source` is object or an
+             *   array you will get a new object returned, otherwise the destination is modified and you can ignore the return value.
+             * @param {*} source The source object.
+             * @returns {object} The extended object.
+             */
+            ClApi.extend = extend;
 
             return ClApi;
         }
