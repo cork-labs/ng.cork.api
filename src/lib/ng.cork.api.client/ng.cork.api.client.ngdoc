@@ -1,0 +1,12 @@
+@ngdoc overview
+@name ng.cork.api.client
+@description
+
+> Provides a base class for API clients, manages services and middlewares.
+
+# Dependencies
+
+- Service `corkUtil`, provided by [bower:ng.cork.util](https://github.com/cork-labs/ng.cork.util)
+
+
+# Usage

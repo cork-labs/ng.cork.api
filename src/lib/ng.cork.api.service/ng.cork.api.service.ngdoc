@@ -1,0 +1,71 @@
+@ngdoc overview
+@name ng.cork.api.service
+@description
+
+> Provides a base class for API client services, with middleware based methods.
+
+# Dependencies
+
+- **[ng.cork.api.request](#/api/ng.cork.api.request)** - Provides encapsulation of the $http config object.
+- Service `corkUtil`, provided by [bower:ng.cork.util](https://github.com/cork-labs/ng.cork.util)
+
+
+# Usage
+
+
+Add the module as a dependency.
+
+<pre>
+angular.module('app', ['ng.cork.api.service']);
+</pre>
+
+**NOTE:** this is a partial module. Use `ng.cork.api` instead to include the entire library.
+
+
+## Factory: [CorkApiService](#/api/ng.cork.api.service.CorkApiService)
+
+> Base class for complex API client services.
+
+Use the {@link ng.cork.api.service.CorkApiService CorkApiService} as a base to your service classes.
+
+<pre>
+angular.module('app', ['ng.cork.api.service'])
+.factory('userService', [
+    'CorkApiService',
+    function (CorkApiService) {
+        var userService = function () {
+            var options = {
+
+            };
+            CorkApiService.call(this, options);
+            // add your methods and properties
+            this.foo = function () {
+                // ... some logic ...
+            };
+            // costumize the $decorate hook
+            this.$decorate = function (data) {
+                // ... something to instance based on the new data
+            };
+        };
+        userService.prototype = Object.create(CorkApiService.protoype);
+        userService.prototype.constructor = userService;
+        return userService;
+    }
+]);
+</pre>
+
+Inject your model constructors to create instances of them.
+
+<pre>
+angular.module('app', ['ng.cork.api.service'])
+.controller('myController', [
+    'userService',
+    function (userService) {
+        userService.load({id: 1}).then(function (user) { .... });
+        userService.search({q: 'foo'}).then(function (results) { .... });
+        userService.update(user).then( ... );
+        userService.delete(user).then( ... );
+        userService.delete(user).then( ... );
+    }
+]);
+</pre>

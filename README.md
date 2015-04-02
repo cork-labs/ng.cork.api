@@ -1,24 +1,24 @@
-# ng.cl.api
-[![Build Status: Linux](http://img.shields.io/travis/ng.cl.api/master.svg?style=flat-square)](https://travis-ci.org/ng.cl.api)
-[![Bower version](http://img.shields.io/bower/v/ng.cl.api.svg?style=flat-square)](https://github.com/cork-labs/ng.cl.api)
+# ng.cork.api
+[![Build Status: Linux](http://img.shields.io/travis/cork-labs/ng.cork.api/master.svg?style=flat-square)](https://travis-ci.org/cork-labs/ng.cork.api)
+[![Bower version](http://img.shields.io/bower/v/ng.cork.api.svg?style=flat-square)](https://github.com/cork-labs/ng.cork.api)
 
-> AngularJS services and classes for building complex api/model layers.
+> AngularJS services and classes for building complex api clients.
 
 
 ## Getting Started
 
-Add **ng.cl.api** to you project.
+Add **ng.cork.api** to you project.
 
 Via bower:
 
 ```
-$ bower install --save ng.cl.api
+$ bower install --save ng.cork.api
 ```
 
 Via npm:
 
 ```
-$ npm install --save ng.cl.api
+$ npm install --save ng.cork.api
 ```
 
 
@@ -30,9 +30,9 @@ Include the following JS/CSS/assets files in your build:
 
 ## Documentation
 
-Make sure to check the [official documentation](http://jarvis.cork-labs.org/ng.cl.api/current/docs) where you can find a
-[guide](http://jarvis.cork-labs.org/ng.cl.api/current/docs/#/guide), a few [demos](http://jarvis.cork-labs.org/ng.cl.api/current/docs/#/demos) and the complete
-[API reference](http://jarvis.cork-labs.org/ng.cl.api/current/docs/#/docs).
+Make sure to check the [official documentation](http://jarvis.cork-labs.org/ng.cork.api/current/docs) where you can find a
+[guide](http://jarvis.cork-labs.org/ng.cork.api/current/docs/#/guide), a few [demos](http://jarvis.cork-labs.org/ng.cork.api/current/docs/#/demos) and the complete
+[API reference](http://jarvis.cork-labs.org/ng.cork.api/current/docs/#/docs).
 
 
 ## Contributing

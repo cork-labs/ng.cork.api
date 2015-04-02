@@ -1,15 +1,15 @@
-describe('ng.cl.api', function () {
+describe('ng.cork.api.client', function () {
     'use strict';
 
-    beforeEach(module('ng.cl.api'));
+    beforeEach(module('ng.cork.api.client'));
 
-    describe('ClApi', function () {
+    describe('CorkApiClient', function () {
 
         describe('middleware()', function () {
 
-            it('should throw an exception if first argument is not a string.', inject(function (ClApi)  {
+            it('should throw an exception if first argument is not a string.', inject(function (CorkApiClient)  {
 
-                var api = new ClApi();
+                var api = new CorkApiClient();
 
                 expect(function () {
                     api.middleware(false);
@@ -18,25 +18,25 @@ describe('ng.cl.api', function () {
 
             describe('when two arguments are provided', function () {
 
-                it('should throw an exception if second argument is neither Array or Function.', inject(function (ClApi)  {
+                it('should throw an exception if second argument is neither Array or Function.', inject(function (CorkApiClient)  {
 
-                    var api = new ClApi();
+                    var api = new CorkApiClient();
 
                     expect(function () {
                         api.middleware('foo', false);
                     }).toThrow(new Error('Invalid middleware "foo".'));
                 }));
 
-                it('should return the api instance.', inject(function (ClApi)  {
+                it('should return the api instance.', inject(function (CorkApiClient)  {
 
-                    var api = new ClApi();
+                    var api = new CorkApiClient();
 
                     expect(api.middleware('foo', function () {})).toBe(api);
                 }));
 
-                it('should throw an exception if middleware is already registered.', inject(function (ClApi)  {
+                it('should throw an exception if middleware is already registered.', inject(function (CorkApiClient)  {
 
-                    var api = new ClApi();
+                    var api = new CorkApiClient();
                     api.middleware('foo', function () {});
 
                     expect(function () {
@@ -46,9 +46,9 @@ describe('ng.cl.api', function () {
 
                 describe('and second argument is an array', function () {
 
-                    it('should throw an exception if last element of last element of the array is not a function.', inject(function (ClApi)  {
+                    it('should throw an exception if last element of last element of the array is not a function.', inject(function (CorkApiClient)  {
 
-                        var api = new ClApi();
+                        var api = new CorkApiClient();
 
                         expect(function () {
                             api.middleware('foo', ['bar', 'baz']);
@@ -59,27 +59,27 @@ describe('ng.cl.api', function () {
 
             describe('when one argument is provided', function () {
 
-                it('should return the api instance.', inject(function (ClApi)  {
+                it('should return the api instance.', inject(function (CorkApiClient)  {
 
-                    var api = new ClApi();
+                    var api = new CorkApiClient();
 
                     expect(api.middleware('foo', function () {})).toBe(api);
                 }));
 
-                it('should throw an exception if middleware is unknown.', inject(function (ClApi)  {
+                it('should throw an exception if middleware is unknown.', inject(function (CorkApiClient)  {
 
-                    var api = new ClApi();
+                    var api = new CorkApiClient();
 
                     expect(function () {
                         api.middleware('foo');
                     }).toThrow(new Error('Unknown middleware "foo".'));
                 }));
 
-                it('should return the middleware.', inject(function (ClApi)  {
+                it('should return the middleware.', inject(function (CorkApiClient)  {
 
                     var fn = function () {};
 
-                    var api = new ClApi();
+                    var api = new CorkApiClient();
                     api.middleware('foo', fn);
 
                     var middleware = api.middleware('foo');

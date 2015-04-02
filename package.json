@@ -1,7 +1,7 @@
 {
-  "name": "ng.cl.api",
+  "name": "ng.cork.api",
   "version": "0.0.1",
-  "description": "AngularJS services and classes for building complex api/model layers.",
+  "description": "AngularJS services and classes for building complex API clients.",
   "author": {
     "name": "Cork Labs",
     "url":  "http://cork-labs.org"
@@ -15,17 +15,17 @@
   "keywords": [
     "angularjs"
   ],
-  "homepage": "https://github.com/cork-labs/ng.cl.api",
-  "bugs": "https://github.com/cork-labs/ng.cl.api/issues",
+  "homepage": "https://github.com/cork-labs/ng.cork.api",
+  "bugs": "https://github.com/cork-labs/ng.cork.api/issues",
   "repository": {
     "type": "git",
-    "url": "git@github.com:cork-labs/ng.cl.api.git"
+    "url": "git@github.com:cork-labs/ng.cork.api.git"
   },
   "readmeFilename": "README.md",
   "dependencies": {
   },
   "devDependencies": {
-    "bower": "~1.3.3",
+    "bower": "~1.4.1",
     "group-grunt-tasks": "~0.1.3",
     "grunt": "~0.4.1",
     "grunt-browser-sync": "^2.0.0",

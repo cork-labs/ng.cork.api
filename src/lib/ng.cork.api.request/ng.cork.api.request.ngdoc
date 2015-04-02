@@ -1,0 +1,46 @@
+@ngdoc overview
+@name ng.cork.api.request
+@description
+
+> Provides encapsulation of the $http config object.
+
+# Dependencies
+
+- Service `corkUtil`, provided by [bower:ng.cork.util](https://github.com/cork-labs/ng.cork.util)
+
+
+# Usage
+
+Add the module as a dependency.
+
+<pre>
+angular.module('app', ['ng.cork.api.request']);
+</pre>
+
+**NOTE:** this is a partial module. Use `ng.cork.api` instead to include the entire library.
+
+
+## Factory: [CorkApiRequest](#/api/ng.cork.api.request.CorkApiRequest)
+
+> Encapsulates the $http config object.
+
+Instances of CorkApiRequest can hold more metadata about the request, other than the
+properties relevant for a [$http() config object](https://docs.angularjs.org/api/ng/service/$http#usage).
+
+When you wish to make execute request just ask for `request.config` and you'll get the actual config object for $http.
+
+<pre>
+angular.module('app', ['ng.cork.api.request'])
+.controller('myController', [
+    'CorkApiRequest',
+    function (CorkApiRequest) {
+        var request = new CorkApiRequest();
+        request.meta = ...
+        request.foo = 'bar';
+        request.url = 'http://foo.bar/api/search';
+        request.params = {q: 'terms'};
+        $http(request.config).then( ... );
+    }
+]);
+</pre>
+

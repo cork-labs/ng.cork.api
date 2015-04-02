@@ -1,0 +1,26 @@
+@ngdoc overview
+@name ng.cork.api
+@description
+
+> Main module, bundling all the classes and utils.
+
+# Dependencies
+
+- **[ng.cork.api.client](#/api/ng.cork.api.client)** - Provides a base class for API clients, manages services and middlewares.
+- **[ng.cork.api.service](#/api/ng.cork.api.service)** - Provides base class for API client services, with middleware based methods.
+- **[ng.cork.api.request](#/api/ng.cork.api.request)** - Provides encapsulation of the $http config object.
+
+
+# Usage
+
+Add this module as a dependency of your modules.
+
+<pre>
+angular.module('app', ['ng.cork.api']);
+</pre>
+
+**NOTE:** Use this module as a dependency if you are using the entire library.
+
+You may otherwise wish to include just the modules you are using.
+
+See {@link #/guide Guide} to learn about file cherry-picking.

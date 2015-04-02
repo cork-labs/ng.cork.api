@@ -1,26 +1,36 @@
-describe('ng.cl.api', function () {
+describe('ng.cork.api.request', function () {
     'use strict';
 
-    beforeEach(module('ng.cl.api'));
+    beforeEach(module('ng.cork.api.request'));
 
-    describe('ClRequest', function () {
+    describe('CorkApiRequest', function () {
 
         describe('constructor()', function () {
 
-            it('should return an instance populated with the provided data.', inject(function (ClRequest) {
+            it('should return an instance populated with the provided data.', inject(function (CorkApiRequest) {
 
                 var data = {
                     id: 42,
                     foo: 'bar'
                 };
 
-                var instance = new ClRequest(data);
+                var instance1 = new CorkApiRequest(data);
+                var instance2 = new CorkApiRequest();
+                instance2.id = 42;
+                instance2.foo = 'bar';
 
-                expect(instance.id).toBe(42);
-                expect(instance.foo).toBe('bar');
+                expect(instance1).toEqual(instance2);
             }));
 
-            it('should deep copy the provided data to populate the instance.', inject(function (ClRequest) {
+            it('should ignore the argument if it is not an object.', inject(function (CorkApiRequest) {
+
+                var instance1 = new CorkApiRequest('data');
+                var instance2 = new CorkApiRequest();
+
+                expect(instance1).toEqual(instance2);
+            }));
+
+            it('should deep copy the provided data to populate the instance.', inject(function (CorkApiRequest) {
 
                 var data = {
                     id: 42,
@@ -32,7 +42,7 @@ describe('ng.cl.api', function () {
                     ]
                 };
 
-                var instance = new ClRequest(data);
+                var instance = new CorkApiRequest(data);
 
                 expect(instance.id).toBe(42);
                 expect(angular.isObject(instance.foo)).toBeTruthy();
@@ -41,7 +51,7 @@ describe('ng.cl.api', function () {
                 expect(instance.qux).toEqual(['quux']);
             }));
 
-            it('modifying the provided data after instantiation should NOT affect the instance.', inject(function (ClRequest) {
+            it('modifying the provided data after instantiation should NOT affect the instance.', inject(function (CorkApiRequest) {
 
                 var data = {
                     id: 42,
@@ -51,7 +61,7 @@ describe('ng.cl.api', function () {
                     }
                 };
 
-                var instance = new ClRequest(data);
+                var instance = new CorkApiRequest(data);
 
                 data.id++;
                 data.foo = 'baz';
@@ -64,10 +74,10 @@ describe('ng.cl.api', function () {
 
             describe('config', function () {
 
-                it('should return an object with the $http config properties only', inject(function (ClRequest) {
+                it('should return an object with the $http config properties only', inject(function (CorkApiRequest) {
                     var data = {
-                        id: 42,
-                        foo: 'bar',
+                        method: 'POST',
+                        url: '/foo/bar',
                         params: {
                             foo: 'bar'
                         },
@@ -85,13 +95,18 @@ describe('ng.cl.api', function () {
                         timeout: 123,
                         withCredentials: false,
                         responseType: 'baz',
+                        // these should be ingored by the config getter
+                        id: 42,
+                        foo: 'bar',
                     };
 
-                    var instance = new ClRequest(data);
+                    var instance = new CorkApiRequest(data);
 
                     var config = instance.config;
 
                     expect(typeof config).toBe('object');
+                    expect(config.method).toEqual(data.method);
+                    expect(config.url).toEqual(data.url);
                     expect(config.params).toEqual(data.params);
                     expect(config.data).toEqual(data.data);
                     expect(config.headers).toEqual(data.headers);
@@ -108,7 +123,7 @@ describe('ng.cl.api', function () {
                     expect(config.foo).toBe(undefined);
                 }));
 
-                it('modifying the return object should not modifiy the instance', inject(function (ClRequest) {
+                it('modifying the return object should not modifiy the instance', inject(function (CorkApiRequest) {
 
                     var data = {
                         params: {
@@ -117,7 +132,7 @@ describe('ng.cl.api', function () {
                         transformRequest: function () {}
                     };
 
-                    var instance = new ClRequest(data);
+                    var instance = new CorkApiRequest(data);
 
                     var config = instance.config;
 

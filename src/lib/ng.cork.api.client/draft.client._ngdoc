@@ -33,16 +33,16 @@ module.provider('myApi', [
 
                 MyApi.prototype = Object.create(clApi.protoype);
                 MyApi.prototype.constructor = myApi;
-
-                return new MyApi();
             }
+
+            return new MyApi();
         ];
     }
 ]);
 
 module.factory('MyApiService', [
-    'ClApiAbstractService',
-    function MyApiServiceFactory(ClApiAbstractService) {
+    'CorkApiService',
+    function MyApiServiceFactory(CorkApiService) {
 
         var MyApiService = function (service, options) {
             var self = this;
@@ -127,7 +127,7 @@ module.factory('MyApiService', [
                 success: ['createPagedCollection', 'updateModelCache']
             };
 
-            ClApiAbstractService.call(self, service);
+            CorkApiService.call(self, service);
         };
 
         return MyApiService;
@@ -136,10 +136,10 @@ module.factory('MyApiService', [
 ]);
 
 module.factory('UserService', [
-    'ClApiAbstractService',
+    'CorkApiService',
     'myApi',
     'User',
-    function UserServiceFactory(ClApiAbstractService, myApi, User) {
+    function UserServiceFactory(CorkApiService, myApi, User) {
 
         var UserService = function (config) {
             var self = this;
@@ -240,7 +240,7 @@ module.factory('UserService', [
                 })
             };
 
-            ClApiAbstractService.apply(self, service);
+            CorkApiService.apply(self, service);
         };
 
         return UserService;

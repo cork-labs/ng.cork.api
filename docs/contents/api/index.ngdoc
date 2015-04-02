@@ -2,14 +2,16 @@
 @name API Reference
 @description
 
-# ng.cl.api API Reference
+# ng.cork.api API Reference
 
-> Welcome to the **ng.cl.api** API reference.
+> Welcome to the **ng.cork.api** API reference.
 
-If you want to know how **ng.cl.api** works, checkout the {@link guide/ guide} and the {@link demos/ demos}.
+If you want to know how **ng.cork.api** works, checkout the {@link guide/ guide} and the {@link demos/ demos}.
 
 
 ## Modules
 
-- **[ng.cl.api](#/api/ng.cl.api)** - Provides a configurable service that divides numbers by X, as well as a directive and a filter.
-
+- **[ng.cork.api](#/api/ng.cork.api)** - Main module, bundling all the classes and utils.
+  - **[ng.cork.api.client](#/api/ng.cork.api.client)** - Provides a base class for API clients, manages services and middlewares.
+  - **[ng.cork.api.service](#/api/ng.cork.api.service)** - Provides base class for API client services, with middleware based methods.
+  - **[ng.cork.api.request](#/api/ng.cork.api.request)** - Provides encapsulation of the $http config object.

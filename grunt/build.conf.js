@@ -87,6 +87,7 @@ module.exports = function (grunt, data) {
             // watch: build_test, build_vendors
             vendor_js: [
                 '<%= paths.vendor %>/angular/angular.js',
+                '<%= paths.vendor %>/ng.cork.util/dist/ng.cork.util.js'
             ],
 
             // test only dependencies
@@ -143,7 +144,7 @@ module.exports = function (grunt, data) {
 
             // used in the name of the template module (results in "my.module.templates")
             // as well as filenames of dist files
-            ngNamespace: 'ng.cl.api',
+            ngNamespace: 'ng.cork.api',
 
             // -- docs related
 
@@ -167,8 +168,10 @@ module.exports = function (grunt, data) {
                 // scripts stylesheets and examples
                 examplesScripts: [
                     'vendor/angular/angular.js',
-                    'src/lib/<%= vars.ngNamespace %>/<%= vars.ngNamespace %>.js',
-
+                    'src/lib/ng.cork.api/ng.cork.api.js',
+                    'src/lib/ng.cork.api.client/Client.js',
+                    'src/lib/ng.cork.api.request/Request.js',
+                    'src/lib/ng.cork.api.service/Service.js',
                 ],
                 examplesStyles: [
                     '//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.css',
@@ -282,6 +285,18 @@ module.exports = function (grunt, data) {
                         '<%= files.src_js %>'
                     ],
                     dest: '<%= paths.dist %>/<%= pkg.name %>'
+                },
+                lib: {
+                    src: [
+                        '<%= files.src_js %>'
+                    ],
+                    dest: '<%= paths.dist %>/lib/',
+                    expand: false,
+                    flatten: true,
+                    options: {
+                        concat: false,
+                        output: 'both',
+                    }
                 }
             },
 
