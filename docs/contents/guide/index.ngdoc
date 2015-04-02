@@ -27,10 +27,18 @@ $ npm install --save ng.cork.api
 ```
 
 
-Include the following JS/CSS/assets files in your build:
--
--
--
+Include the following JS files in your build:
+- `dist/ng.cork.api.js` OR `dist/ng.cork.api.min.js`
+
+The following bower dependencies should also be included:
+- `vendor/ng.cork.util/dist/ng.cork.util.js`
+- `vendor/ng.cork.deep/dist/ng.cork.deep.js`
+
+Alternatively, include only the components and utils you are going to use:
+- `dist/lib/ng.cork.api.client.js`
+- `dist/lib/ng.cork.api.request.js`
+- `dist/lib/ng.cork.api.service.js`
+- *... but don't forget to load modules required by these ...*
 
 
 ## Contributing

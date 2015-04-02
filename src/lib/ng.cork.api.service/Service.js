@@ -3,6 +3,7 @@
 
     var module = angular.module('ng.cork.api.service', [
         'ng.cork.util',
+        'ng.cork.deep.extend',
         'ng.cork.api.request'
     ]);
     var copy = angular.copy;
@@ -168,12 +169,12 @@
     module.factory('CorkApiService', [
         '$q',
         '$http',
-        'CorkApiRequest',
         'corkUtil',
-        function CorkApiServiceFactory($q, $http, CorkApiRequest, corkUtil) {
+        'corkDeepExtend',
+        'CorkApiRequest',
+        function CorkApiServiceFactory($q, $http, corkUtil, corkDeepExtend, CorkApiRequest) {
 
             var isPromise = corkUtil.isPromise;
-            var extend = corkUtil.extend;
 
             function compileURL(pattern, params) {
                 var data = params || {};
@@ -323,7 +324,7 @@
                     var req = new RequestConstructor(method.config);
 
                     req.replay = function requestReplay(replayConfig) {
-                        extend(req, replayConfig);
+                        corkDeepExtend(req, replayConfig);
                         return executeAndProcess(req);
                     };
 
@@ -605,7 +606,7 @@
                         throw new Error('Invalid options for service method "' + name + '".');
                     }
                     var baseConfig = config.all ? copy(config.all) : {};
-                    method = extend(baseConfig, method);
+                    method = corkDeepExtend(baseConfig, method);
                     normalizeServiceMethod(name, method);
                     Object.defineProperty(self, name, {
                         value: createServiceMethod(CorkApiRequest, config.execute, method)
