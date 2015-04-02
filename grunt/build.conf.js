@@ -169,6 +169,8 @@ module.exports = function (grunt, data) {
                 // scripts stylesheets and examples
                 examplesScripts: [
                     'vendor/angular/angular.js',
+                    'vendor/ng.cork.util/dist/ng.cork.util.js',
+                    'vendor/ng.cork.deep/dist/ng.cork.deep.js',
                     'src/lib/ng.cork.api/ng.cork.api.js',
                     'src/lib/ng.cork.api.client/Client.js',
                     'src/lib/ng.cork.api.request/Request.js',
