@@ -3,6 +3,7 @@
 
     var module = angular.module('ng.cork.api.client', [
         'ng.cork.util',
+        'ng.cork.deep.extend'
     ]);
 
     var copy = angular.copy;
@@ -33,7 +34,8 @@
         '$injector',
         '$http',
         'corkUtil',
-        function CorkApiClientFactory($injector, $http, corkUtil) {
+        'corkDeepExtend',
+        function CorkApiClientFactory($injector, $http, corkUtil, corkDeepExtend) {
 
             var isInjectable = corkUtil.isInjectable;
 
@@ -64,11 +66,10 @@
             var CorkApiClient = function (config) {
                 var self = this;
 
-                config = corkUtil.extend(copy(defaults), config || {});
+                config = corkDeepExtend(copy(defaults), config || {});
 
                 // makes sure baseUrl ends with a traling /
                 config.baseUrl = trailingSlash(config.baseUrl);
-                // @todo config.execute = config.execute || $injector('$http');
 
                 // -- middlewares
 
