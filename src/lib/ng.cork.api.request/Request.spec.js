@@ -22,6 +22,13 @@ describe('ng.cork.api.request', function () {
                 expect(instance1).toEqual(instance2);
             }));
 
+            it('instances should extend CorkDeepObj.', inject(function (CorkApiRequest, CorkDeepObj) {
+
+                var instance = new CorkApiRequest();
+
+                expect(instance instanceof CorkDeepObj).toEqual(true);
+            }));
+
             it('should ignore the argument if it is not an object.', inject(function (CorkApiRequest) {
 
                 var instance1 = new CorkApiRequest('data');

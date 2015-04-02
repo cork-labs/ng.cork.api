@@ -2,7 +2,8 @@
     'use strict';
 
     var module = angular.module('ng.cork.api.request', [
-        'ng.cork.util'
+        'ng.cork.util',
+        'ng.cork.deep.obj'
     ]);
 
     var copy = angular.copy;
@@ -17,10 +18,20 @@
      *
      * @description
      * Encapsulates the $http config object.
+     *
+     * Because it extends [CorkDeepObj](https://github.com/cork-labs/ng.cork.deep), instances will also have methods
+     * to set/get/delete request properties via dot notation path.
+     *
+     * <pre>
+     * var request = new CorkApiRequest({timeout: 5000});
+     * request.set('params.id', 5);
+     * request.get('urlParams.path');
+     * </pre>
+     *
      */
     module.factory('CorkApiRequest', [
-        'corkUtil',
-        function CorkApiRequestFactory(corkUtil) {
+        'CorkDeepObj',
+        function CorkApiRequestFactory(CorkDeepObj) {
 
             /**
              * @ngdoc function
@@ -31,12 +42,17 @@
              * Constructor
              *
              * @param {object} config Any arbitrary data, potentially containing the $http() config properties.
+             *
+             * <pre>
+             * var request = new CorkApiRequest({timeout: 5000});
+             * </pre>
              */
             var Request = function Request(config) {
-                if (isObject(config)) {
-                    corkUtil.extend(this, config);
-                }
+                CorkDeepObj.call(this, config);
             };
+
+            Request.prototype = Object.create(CorkDeepObj.prototype);
+            Request.prototype.constructor = Request;
 
             Object.defineProperty(Request.prototype, 'config', {
                 get: function () {
