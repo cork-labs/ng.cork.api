@@ -1,3 +1,11 @@
+<a name="v0.0.4"></a>
+### v0.0.4 (2015-04-16)
+
+
+#### Bug Fixes
+
+* **service:** broken $http default ([9a72722a](git@github.com:cork-labs/ng.cork.api/commit/9a72722a77cfa7303c9c2e85736510c4db6fc118))
+
 <a name="v0.0.3"></a>
 ### v0.0.3 (2015-04-03)
 

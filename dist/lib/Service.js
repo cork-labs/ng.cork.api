@@ -444,7 +444,7 @@
                 var config = copy(options);
 
                 // default execute function
-                config.execute = config.execute || $http();
+                config.execute = config.execute || $http;
 
                 if (!isFunction(config.execute)) {
                     throw new Error('Invalid execute fn for service "' + self.name + '".');

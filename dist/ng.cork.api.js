@@ -1,5 +1,5 @@
 /**
- * ng.cork.api - v0.0.3 - 2015-04-03
+ * ng.cork.api - v0.0.4 - 2015-04-16
  * https://github.com/cork-labs/ng.cork.api
  *
  * Copyright (c) 2015 Cork Labs <http://cork-labs.org>
@@ -740,7 +740,7 @@
                 var config = copy(options);
 
                 // default execute function
-                config.execute = config.execute || $http();
+                config.execute = config.execute || $http;
 
                 if (!isFunction(config.execute)) {
                     throw new Error('Invalid execute fn for service "' + self.name + '".');

@@ -1,6 +1,6 @@
 {
   "name": "ng.cork.api",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "AngularJS services and classes for building complex API clients.",
   "author": {
     "name": "Cork Labs",
