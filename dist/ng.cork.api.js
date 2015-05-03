@@ -1,5 +1,5 @@
 /**
- * ng.cork.api - v0.0.4 - 2015-04-16
+ * ng.cork.api - v0.0.5 - 2015-05-03
  * https://github.com/cork-labs/ng.cork.api
  *
  * Copyright (c) 2015 Cork Labs <http://cork-labs.org>
@@ -99,7 +99,8 @@
                  *
                  * @param {string} name The middleware name.
                  * @param {function|Array} middleware A middleware function or an array defining an injectable function.
-                 * @returns {boolean} Some result.
+                 * @returns {*} The requested middleware function|injectable if called with one argument or the `CorkApiClient`
+                 * instance if called with two (for chaining purposes).
                  */
                 self.middleware = function (name, middleware) {
                     if (!isString(name)) {
@@ -151,7 +152,8 @@
                  *
                  * @param {string} name The service name.
                  * @param {function=} factory A function that returns the service instance or a name of an injectable service.
-                 * @returns {boolean} Some result.
+                 * @returns {*} The requested service instance if called with one argument or the `CorkApiClient` instance if
+                 * called with two (for chaining purposes).
                  */
                 self.service = function (name, factory) {
                     if (!isString(name)) {
