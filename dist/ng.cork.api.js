@@ -1,5 +1,5 @@
 /**
- * ng.cork.api - v0.0.5 - 2015-05-03
+ * ng.cork.api - v0.0.6 - 2015-05-10
  * https://github.com/cork-labs/ng.cork.api
  *
  * Copyright (c) 2015 Cork Labs <http://cork-labs.org>
